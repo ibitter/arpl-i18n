@@ -1001,7 +1001,7 @@ function keymapMenu() {
 function updateMenu() {
   PLATFORM="`readModelKey "${MODEL}" "platform"`"
   KVER="`readModelKey "${MODEL}" "builds.${BUILD}.kver"`"
-  PROXY="`readConfigKey "proxy" "${USER_CONFIG_FILE}"`"; [ -n "${PROXY}" ] && [[ "${PROXY: -1}" != "/" ]] && PROXY="${PROXY}/"
+  PROXY="`readConfigKey "proxy" "${USER_CONFIG_FILE}"`"; [ -n "${PROXY}" ] && PROXY="-x ${PROXY}"
   while true; do
     dialog --backtitle "`backtitle`" --menu "$(TEXT "Choose a option")" 0 0 0 \
       a "$(TEXT "Update arpl")" \
@@ -1017,7 +1017,7 @@ function updateMenu() {
         dialog --backtitle "`backtitle`" --title "$(TEXT "Update arpl")" --aspect 18 \
           --infobox "$(TEXT "Checking last version")" 0 0
         ACTUALVERSION="${ARPL_VERSION}"
-        TAG="`curl -k -s "${PROXY}https://api.github.com/repos/wjz304/arpl-i18n/releases/latest" | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`"
+        TAG="`curl -k -s ${PROXY} "https://api.github.com/repos/ibitter/arpl-i18n/releases/latest" | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`"
         if [ $? -ne 0 -o -z "${TAG}" ]; then
           dialog --backtitle "`backtitle`" --title "$(TEXT "Update arpl")" --aspect 18 \
             --msgbox "$(TEXT "Error checking new version")" 0 0
@@ -1032,7 +1032,7 @@ function updateMenu() {
         dialog --backtitle "`backtitle`" --title "$(TEXT "Update arpl")" --aspect 18 \
           --infobox "`printf "$(TEXT "Downloading last version %s")" "${TAG}"`" 0 0
         # Download update file
-        STATUS=`curl -k -w "%{http_code}" -L "${PROXY}https://github.com/wjz304/arpl-i18n/releases/download/${TAG}/update.zip" -o "/tmp/update.zip"`
+        STATUS=`curl -k ${PROXY} -w "%{http_code}" -L "https://github.com/ibitter/arpl-i18n/releases/download/${TAG}/update.zip" -o "/tmp/update.zip"`
         if [ $? -ne 0 -o ${STATUS} -ne 200 ]; then
           dialog --backtitle "`backtitle`" --title "$(TEXT "Update arpl")" --aspect 18 \
             --msgbox "$(TEXT "Error downloading update file")" 0 0
@@ -1078,7 +1078,7 @@ function updateMenu() {
       d)
         dialog --backtitle "`backtitle`" --title "$(TEXT "Update addons")" --aspect 18 \
           --infobox "$(TEXT "Checking last version")" 0 0
-        TAG=`curl -k -s "${PROXY}https://api.github.com/repos/wjz304/arpl-addons/releases/latest" | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`
+        TAG=`curl -k -s ${PROXY} "https://api.github.com/repos/wjz304/arpl-addons/releases/latest" | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`
         if [ $? -ne 0 -o -z "${TAG}" ]; then
           dialog --backtitle "`backtitle`" --title "$(TEXT "Update addons")" --aspect 18 \
             --msgbox "$(TEXT "Error checking new version")" 0 0
@@ -1086,7 +1086,7 @@ function updateMenu() {
         fi
         dialog --backtitle "`backtitle`" --title "$(TEXT "Update addons")" --aspect 18 \
           --infobox "$(TEXT "Downloading last version")" 0 0
-        STATUS=`curl -k -s -w "%{http_code}" -L "${PROXY}https://github.com/wjz304/arpl-addons/releases/download/${TAG}/addons.zip" -o "/tmp/addons.zip"`
+        STATUS=`curl -k -s ${PROXY} -w "%{http_code}" -L "https://github.com/wjz304/arpl-addons/releases/download/${TAG}/addons.zip" -o "/tmp/addons.zip"`
         if [ $? -ne 0 -o ${STATUS} -ne 200 ]; then
           dialog --backtitle "`backtitle`" --title "$(TEXT "Update addons")" --aspect 18 \
             --msgbox "$(TEXT "Error downloading new version")" 0 0
@@ -1114,7 +1114,7 @@ function updateMenu() {
       l)
         dialog --backtitle "`backtitle`" --title "$(TEXT "Update LKMs")" --aspect 18 \
           --infobox "$(TEXT "Checking last version")" 0 0
-        TAG=`curl -k -s "${PROXY}https://api.github.com/repos/wjz304/redpill-lkm/releases/latest" | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`
+        TAG=`curl -k -s ${PROXY} "https://api.github.com/repos/wjz304/redpill-lkm/releases/latest" | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`
         if [ $? -ne 0 -o -z "${TAG}" ]; then
           dialog --backtitle "`backtitle`" --title "$(TEXT "Update LKMs")" --aspect 18 \
             --msgbox "$(TEXT "Error checking new version")" 0 0
@@ -1122,7 +1122,7 @@ function updateMenu() {
         fi
         dialog --backtitle "`backtitle`" --title "$(TEXT "Update LKMs")" --aspect 18 \
           --infobox "$(TEXT "Downloading last version")" 0 0
-        STATUS=`curl -k -s -w "%{http_code}" -L "${PROXY}https://github.com/wjz304/redpill-lkm/releases/download/${TAG}/rp-lkms.zip" -o "/tmp/rp-lkms.zip"`
+        STATUS=`curl -k -s ${PROXY} -w "%{http_code}" -L "https://github.com/wjz304/redpill-lkm/releases/download/${TAG}/rp-lkms.zip" -o "/tmp/rp-lkms.zip"`
         if [ $? -ne 0 -o ${STATUS} -ne 200 ]; then
           dialog --backtitle "`backtitle`" --title "$(TEXT "Update LKMs")" --aspect 18 \
             --msgbox "$(TEXT "Error downloading last version")" 0 0
@@ -1139,7 +1139,7 @@ function updateMenu() {
       m)
         dialog --backtitle "`backtitle`" --title "$(TEXT "Update Modules")" --aspect 18 \
           --infobox "$(TEXT "Checking last version")" 0 0
-        TAG=`curl -k -s "${PROXY}https://api.github.com/repos/wjz304/arpl-modules/releases/latest" | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`
+        TAG=`curl -k -s ${PROXY} "https://api.github.com/repos/wjz304/arpl-modules/releases/latest" | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}'`
         if [ $? -ne 0 -o -z "${TAG}" ]; then
           dialog --backtitle "`backtitle`" --title "$(TEXT "Update Modules")" --aspect 18 \
             --msgbox "$(TEXT "Error checking new version")" 0 0
@@ -1148,7 +1148,7 @@ function updateMenu() {
 
         dialog --backtitle "`backtitle`" --title "$(TEXT "Update Modules")" --aspect 18 \
           --infobox "$(TEXT "Downloading last version")" 0 0
-        STATUS=`curl -k -s -w "%{http_code}" -L "${PROXY}https://github.com/wjz304/arpl-modules/releases/download/${TAG}/modules.zip" -o "/tmp/modules.zip"`
+        STATUS=`curl -k -s ${PROXY} -w "%{http_code}" -L "https://github.com/wjz304/arpl-modules/releases/download/${TAG}/modules.zip" -o "/tmp/modules.zip"`
         if [ $? -ne 0 -o ${STATUS} -ne 200 ]; then
           dialog --backtitle "`backtitle`" --title "$(TEXT "Update Modules")" --aspect 18 \
             --msgbox "$(TEXT "Error downloading last version")" 0 0
